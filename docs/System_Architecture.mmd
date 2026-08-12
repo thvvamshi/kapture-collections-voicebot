@@ -1,0 +1,67 @@
+sequenceDiagram
+    autonumber
+
+    actor Customer
+    participant Phone as 📞 Telephony
+    participant Vapi as 🔄 Vapi Engine
+    participant STT as 🎤 Deepgram STT
+    participant LLM as 🧠 GPT-4o-mini
+    participant API as ⚙️ Mock API Server
+    participant TTS as 🔊 ElevenLabs TTS
+
+    Customer->>Phone: Answers call
+    Phone->>Vapi: Streams audio
+    Vapi->>STT: Audio stream
+    STT-->>Vapi: Transcribed text
+
+    rect rgb(255, 240, 240)
+        Note over Vapi,API: 🔒 Authentication Phase — No Debt Disclosure
+
+        Vapi->>LLM: Conversation state + transcript
+        LLM-->>Vapi: Ask identity verification
+        Vapi->>TTS: Verification request
+        TTS-->>Customer: "Please confirm last 4 digits of PAN or DOB"
+
+        Customer->>Vapi: "1 2 3 4"
+        Vapi->>STT: Customer speech
+        STT-->>Vapi: "1234"
+        Vapi->>LLM: Verification value
+
+        LLM->>API: verify_customer(account_id, "1234")
+        API-->>LLM: verified=true + customer details
+
+        Note over LLM: AUTHENTICATED only after verified=true
+    end
+
+    rect rgb(240, 255, 240)
+        Note over Vapi,API: 💰 Collections & Negotiation Phase
+
+        LLM-->>Vapi: Disclose returned account details
+        Vapi->>TTS: "₹8,499 overdue by 12 days"
+        TTS-->>Customer: Account information
+
+        Customer->>Vapi: "I will pay tomorrow"
+        Vapi->>STT: Customer speech
+        STT-->>Vapi: Payment commitment
+
+        Vapi->>LLM: Payment date + amount
+
+        LLM->>API: log_promise_to_pay(account_id, date, amount)
+        API-->>LLM: success=true
+
+        LLM->>API: send_payment_link(account_id, SMS)
+        API-->>LLM: success=true
+
+        LLM->>API: mark_disposition(account_id, PTP_AGREED)
+        API-->>LLM: success=true
+    end
+
+    rect rgb(240, 240, 255)
+        Note over Vapi,LLM: 📞 Call Wrap-up
+
+        LLM-->>Vapi: Final confirmation
+        Vapi->>TTS: Closing message
+        TTS-->>Customer: "Thank you for your time today. Have a great day."
+        Vapi->>Phone: End call
+        Phone-->>Customer: Call ended
+    end

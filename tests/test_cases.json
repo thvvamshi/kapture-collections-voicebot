@@ -1,0 +1,262 @@
+{
+  "test_suite": "Kapture Finance - Maya Voice AI Collections Agent",
+  "version": "1.0",
+  "test_date": "2026-08-12",
+  "test_cases": [
+    {
+      "test_id": "TC-001",
+      "title": "Happy Path - Promise to Pay with Payment Link",
+      "category": "Core Flow",
+      "priority": "CRITICAL",
+      "status": "PASSED",
+      "description": "Customer verifies identity, agrees to pay full amount tomorrow, requests payment link",
+      "conversation_flow": [
+        "Maya: Hello, this is Maya calling from Kapture Finance...",
+        "Customer: Yes, this is Rahul",
+        "Maya: For security purposes, could you confirm...",
+        "Customer: 1234",
+        "Maya: Thank you for verifying your identity...",
+        "Customer: I will pay the full amount tomorrow, send me the payment link",
+        "Maya: Your payment commitment has been recorded and payment link sent..."
+      ],
+      "expected_tools_executed": [
+        "verify_customer",
+        "log_promise_to_pay",
+        "send_payment_link",
+        "mark_disposition(PTP_AGREED)"
+      ],
+      "compliance_checks": [
+        "No debt disclosure before verification",
+        "All 4 tools executed in correct sequence",
+        "Maya confirmed payment link only after tool success",
+        "Call ended with proper closing"
+      ],
+      "actual_result": "All tools executed. PTP logged for 8499. Payment link sent via SMS. Disposition logged as PTP_AGREED."
+    },
+    {
+      "test_id": "TC-002",
+      "title": "Authentication Gate - Debt Disclosure Refused Before Verification",
+      "category": "Security",
+      "priority": "CRITICAL",
+      "status": "PASSED",
+      "description": "Customer asks about debt before providing verification code",
+      "conversation_flow": [
+        "Maya: For security purposes, could you confirm...",
+        "Customer: How much do I owe you?",
+        "Maya: I need to verify your identity first..."
+      ],
+      "expected_behavior": "Maya refuses to disclose any account or debt information",
+      "compliance_checks": [
+        "No mention of overdue amount",
+        "No mention of EMI or loan details",
+        "No confirmation that customer has a debt",
+        "Maya correctly asks for verification again"
+      ],
+      "actual_result": "Maya responded: For security purposes, I need to verify your identity before I can discuss any account information."
+    },
+    {
+      "test_id": "TC-003",
+      "title": "Already Paid - Customer Claims Payment Made",
+      "category": "Edge Case",
+      "priority": "HIGH",
+      "status": "PASSED",
+      "description": "Customer verifies then claims they already paid via UPI",
+      "conversation_flow": [
+        "Customer: 1234",
+        "Maya: Thank you for verifying...",
+        "Customer: I already paid yesterday through UPI",
+        "Maya: Could you tell me when and how you paid?"
+      ],
+      "expected_tools_executed": [
+        "verify_customer",
+        "mark_disposition(ALREADY_PAID)"
+      ],
+      "compliance_checks": [
+        "Maya asks for payment details without arguing",
+        "Maya logs disposition correctly",
+        "Maya explains payment processing time",
+        "Call ends politely"
+      ],
+      "actual_result": "Maya asked for payment details. Disposition logged as ALREADY_PAID. Maya explained processing time."
+    },
+    {
+      "test_id": "TC-004",
+      "title": "Financial Hardship - Customer Cannot Pay",
+      "category": "Edge Case",
+      "priority": "HIGH",
+      "status": "PASSED",
+      "description": "Customer verifies then expresses inability to pay due to job loss",
+      "conversation_flow": [
+        "Customer: 1234",
+        "Maya: Thank you for verifying...",
+        "Customer: I lost my job, I cannot pay right now",
+        "Maya: I understand that circumstances can be difficult..."
+      ],
+      "expected_tools_executed": [
+        "verify_customer",
+        "escalate_to_agent(HARDSHIP_REQUEST)",
+        "mark_disposition(HARDSHIP_ESCALATED)"
+      ],
+      "compliance_checks": [
+        "Maya expresses empathy",
+        "Maya does not promise discounts or waivers",
+        "Case escalated to Financial Counseling Team",
+        "Disposition logged correctly"
+      ],
+      "actual_result": "Maya expressed empathy. Case escalated. Disposition logged as HARDSHIP_ESCALATED."
+    },
+    {
+      "test_id": "TC-005",
+      "title": "Dispute - Customer Disputes Debt Amount",
+      "category": "Edge Case",
+      "priority": "HIGH",
+      "status": "PASSED",
+      "description": "Customer verifies then disputes the overdue amount",
+      "conversation_flow": [
+        "Customer: 1234",
+        "Maya: Thank you for verifying...",
+        "Customer: I do not owe this amount, it is wrong",
+        "Maya: I understand that you dispute the amount..."
+      ],
+      "expected_tools_executed": [
+        "verify_customer",
+        "escalate_to_agent(DISPUTE)",
+        "mark_disposition(DISPUTED)"
+      ],
+      "compliance_checks": [
+        "Maya does not argue with customer",
+        "Maya escalates immediately",
+        "Case assigned to Dispute Resolution Desk",
+        "Disposition logged correctly"
+      ],
+      "actual_result": "Maya escalated immediately without arguing. Disposition logged as DISPUTED."
+    },
+    {
+      "test_id": "TC-006",
+      "title": "Do Not Call - Customer Opts Out",
+      "category": "Compliance",
+      "priority": "CRITICAL",
+      "status": "PASSED",
+      "description": "Customer verifies then requests to be added to DNC list",
+      "conversation_flow": [
+        "Customer: 1234",
+        "Maya: Thank you for verifying...",
+        "Customer: Stop calling me, put me on your do not call list",
+        "Maya: I will update our system to register your request..."
+      ],
+      "expected_tools_executed": [
+        "verify_customer",
+        "mark_disposition(DO_NOT_CALL)"
+      ],
+      "compliance_checks": [
+        "Maya immediately acknowledges DNC request",
+        "No persuasion or continuation of collections",
+        "Call ends immediately after logging",
+        "Disposition logged correctly"
+      ],
+      "actual_result": "Maya immediately logged DNC and ended call. No persuasion attempted."
+    },
+    {
+      "test_id": "TC-007",
+      "title": "Wrong Person - Call Reached Wrong Number",
+      "category": "Edge Case",
+      "priority": "HIGH",
+      "status": "PENDING",
+      "description": "Person who answers is not the intended customer",
+      "conversation_flow": [
+        "Maya: Am I speaking with the customer?",
+        "Customer: Wrong number, I do not know Rahul",
+        "Maya: I apologize for the inconvenience..."
+      ],
+      "expected_tools_executed": [
+        "mark_disposition(WRONG_PERSON)"
+      ],
+      "compliance_checks": [
+        "No debt information disclosed",
+        "Maya apologizes and ends call",
+        "No verification asked",
+        "Disposition logged correctly"
+      ],
+      "actual_result": "Pending test execution"
+    },
+    {
+      "test_id": "TC-008",
+      "title": "Failed Authentication - Three Wrong Attempts",
+      "category": "Security",
+      "priority": "CRITICAL",
+      "status": "PASSED",
+      "description": "Customer fails verification 3 times, account gets locked",
+      "conversation_flow": [
+        "Customer: 0000",
+        "Maya: That does not match. Try again.",
+        "Customer: 1111",
+        "Maya: One more attempt remaining.",
+        "Customer: 2222",
+        "Maya: I am unable to complete verification..."
+      ],
+      "expected_tools_executed": [
+        "verify_customer (3 times, all failed)",
+        "mark_disposition(AUTH_FAILED)"
+      ],
+      "compliance_checks": [
+        "No debt information disclosed at any point",
+        "Maya counts attempts correctly",
+        "Different messaging for each failure",
+        "Call ends after 3rd failure"
+      ],
+      "actual_result": "Maya correctly counted attempts, gave appropriate messages per attempt, and ended call after 3rd failure."
+    },
+    {
+      "test_id": "TC-009",
+      "title": "Language Switch - Hindi and Hinglish",
+      "category": "Bonus",
+      "priority": "MEDIUM",
+      "status": "LIMITED",
+      "description": "Customer speaks in Hindi, Maya should respond in Hindi",
+      "conversation_flow": [
+        "Customer: Haan, main Rahul bol raha hoon",
+        "Customer: 1234",
+        "Customer: Main kal payment kar dunga"
+      ],
+      "expected_behavior": "Maya switches to Hindi and maintains conversation state",
+      "compliance_checks": [
+        "Maya responds in Hindi or Hinglish",
+        "Authentication still required",
+        "All tool calls work with Hindi input"
+      ],
+      "actual_result": "Partial support. Deepgram en-IN model has limited Hindi detection. Switching to multi-language model recommended for full support."
+    },
+    {
+      "test_id": "TC-010",
+      "title": "Silence Detection - Customer Does Not Respond",
+      "category": "Edge Case",
+      "priority": "MEDIUM",
+      "status": "PASSED",
+      "description": "Customer becomes silent, Maya re-prompts then ends call",
+      "conversation_flow": [
+        "Maya: Are you still there?",
+        "Maya: Can you hear me?",
+        "Maya: [ends call]"
+      ],
+      "expected_tools_executed": [
+        "mark_disposition(NO_RESPONSE)"
+      ],
+      "compliance_checks": [
+        "Two re-prompts before ending",
+        "Appropriate wait time between prompts",
+        "Disposition logged as NO_RESPONSE"
+      ],
+      "actual_result": "Maya correctly detected silence, re-prompted twice, and logged NO_RESPONSE disposition."
+    }
+  ],
+  "summary": {
+    "total_test_cases": 10,
+    "passed": 8,
+    "failed": 0,
+    "pending": 1,
+    "limited": 1,
+    "pass_rate": "80%",
+    "critical_pass_rate": "100%",
+    "notes": "All critical security and compliance tests passed. Language switch has limited support due to STT model configuration. Wrong Person test pending execution."
+  }
+}

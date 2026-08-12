@@ -1,0 +1,41 @@
+graph TB
+
+    subgraph Customer["👤 Customer"]
+        A[Mobile Phone]
+    end
+
+    subgraph VapiCloud["☁️ Vapi Cloud Platform"]
+        B[Telephony Gateway]
+        C[Deepgram Nova-2<br/>Speech-to-Text]
+        D[GPT-4o-mini<br/>LLM Orchestrator]
+        E[ElevenLabs Sarah<br/>Text-to-Speech]
+        F[Vapi Orchestrator]
+    end
+
+    subgraph External["🌐 Secure Tunnel"]
+        I[ngrok HTTPS Tunnel]
+    end
+
+    subgraph Backend["⚙️ Mock Backend"]
+        G[Express Server<br/>Node.js]
+        H[(In-Memory<br/>Customer Store)]
+        J[(Call & Action State)]
+    end
+
+    A <-->|PSTN / SIP| B
+    B <-->|Audio Stream| C
+    C -->|Transcript| F
+    F <-->|State + Transcript| D
+    D -->|Response| F
+    F -->|Text| E
+    E -->|Audio| B
+
+    D -->|HTTPS API Tool Calls| I
+    I -->|HTTP POST /webhook| G
+    G <--> H
+    G --> J
+
+    style Customer fill:#e1f5fe
+    style VapiCloud fill:#fff3e0
+    style Backend fill:#e8f5e9
+    style External fill:#fce4ec

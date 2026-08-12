@@ -1,0 +1,149 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "verify_customer",
+      "description": "Verify the customer's identity using the account ID and verification code. This tool must succeed with verified=true before any loan, overdue, balance, debt, or payment information is disclosed.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "The account ID associated with the current customer. Use the account ID provided by the current call context. Never invent an account ID."
+          },
+          "verification_code": {
+            "type": "string",
+            "description": "The verification value provided by the customer, such as the last 4 digits of PAN or year of birth."
+          }
+        },
+        "required": ["account_id", "verification_code"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "log_promise_to_pay",
+      "description": "Record a customer's Promise-to-Pay commitment after the customer explicitly agrees to make a payment.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "The verified customer's account ID from the current call context."
+          },
+          "ptp_date": {
+            "type": "string",
+            "description": "The date the customer promises to make the payment, formatted as YYYY-MM-DD."
+          },
+          "amount": {
+            "type": "number",
+            "description": "The amount the customer explicitly commits to pay."
+          },
+          "payment_method": {
+            "type": "string",
+            "description": "The payment method selected by the customer, if provided. Examples: UPI, bank transfer, card."
+          }
+        },
+        "required": ["account_id", "ptp_date", "amount"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "send_payment_link",
+      "description": "Send a payment link to the authenticated customer's registered contact channel after the customer agrees to make a payment.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "The verified customer's account ID from the current call context."
+          },
+          "channel": {
+            "type": "string",
+            "enum": ["SMS", "WhatsApp", "BOTH"],
+            "description": "The channel through which the payment link should be sent."
+          }
+        },
+        "required": ["account_id", "channel"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "mark_disposition",
+      "description": "Record the final outcome of the current customer call after the required action has been completed.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "The verified customer's account ID from the current call context."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PTP_AGREED",
+              "ALREADY_PAID",
+              "DISPUTED",
+              "HARDSHIP_ESCALATED",
+              "WRONG_PERSON",
+              "DO_NOT_CALL",
+              "NO_RESPONSE"
+            ],
+            "description": "The final disposition of the call."
+          },
+          "notes": {
+            "type": "string",
+            "description": "A concise description of the outcome and any relevant customer-provided information."
+          }
+        },
+        "required": ["account_id", "status"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "escalate_to_agent",
+      "description": "Escalate the authenticated customer's case to a human agent when human assistance is required, including disputes, hardship requests, complaints, or explicit customer requests.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "description": "The verified customer's account ID from the current call context."
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "HARDSHIP_REQUEST",
+              "DISPUTE",
+              "COMPLAINT",
+              "CUSTOMER_REQUEST"
+            ],
+            "description": "The reason the customer requires human assistance."
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"],
+            "description": "The priority assigned to the escalation."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Relevant context that should be passed to the human agent."
+          }
+        },
+        "required": ["account_id", "reason"],
+        "additionalProperties": false
+      }
+    }
+  }
+]
