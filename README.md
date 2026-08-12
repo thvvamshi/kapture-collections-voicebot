@@ -80,11 +80,18 @@ connecting to a real loan-management or payment system.
 
 ------------------------------------------------------------------------
 
+## 🔗 Project Links
+
+| Resource | Link |
+|---|---|
+| GitHub Repository | https://github.com/thvvamshi/kapture-collections-voicebot |
+| Production Backend | https://kapture-collections-voicebot-a3dk.onrender.com/ |
+| Health Check | https://kapture-collections-voicebot-a3dk.onrender.com/health |
+| Vapi Webhook | https://kapture-collections-voicebot-a3dk.onrender.com/webhook |
+
+---
+
 ## Features
-
-## link
-GitHUb :  Repo[https://github.com/thvvamshi/kapture-collections-voicebot]
-
 
 ### Voice Conversation
 
