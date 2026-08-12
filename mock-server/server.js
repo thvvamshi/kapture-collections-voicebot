@@ -7,10 +7,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ============================================================
 // MIDDLEWARE
-// ============================================================
-
 app.use(
   cors({
     origin: "*",
@@ -48,10 +45,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ============================================================
 // MOCK CUSTOMER DATABASE
-// ============================================================
-
 const customers = new Map([
   [
     "ACC-88392",
@@ -444,10 +438,7 @@ const toolHandlers = {
   },
 };
 
-// ============================================================
 // REQUEST DETECTION
-// ============================================================
-
 function detectDirectTool(body) {
   const args = normalizeArgs(body);
 
@@ -469,10 +460,7 @@ function detectDirectTool(body) {
   return null;
 }
 
-// ============================================================
 // MAIN WEBHOOK
-// ============================================================
-
 app.post("/webhook", (req, res) => {
   try {
     const body = req.body || {};
@@ -637,10 +625,7 @@ app.post("/webhook", (req, res) => {
   }
 });
 
-// ============================================================
 // UTILITY ENDPOINTS
-// ============================================================
-
 app.get("/health", (req, res) => {
   const totalCalls = callHistory.length;
   const ptpAgreed = callHistory.filter(c => c.disposition_logged === "PTP_AGREED").length;
