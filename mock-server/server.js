@@ -94,20 +94,14 @@ const customers = new Map([
   ],
 ]);
 
-// ============================================================
 // STATE
-// ============================================================
-
 const verificationTracker = new Map();
 const callHistory = [];
 const ptpHistory = [];
 const paymentHistory = [];
 const escalationHistory = [];
 
-// ============================================================
 // CONSTANTS
-// ============================================================
-
 const MAX_ATTEMPTS = 3;
 
 const VALID_DISPOSITIONS = [
@@ -131,10 +125,7 @@ const VALID_ESCALATION_REASONS = [
 
 const VALID_PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 
-// ============================================================
 // HELPERS
-// ============================================================
-
 function generateId(prefix) {
   return `${prefix}-${Date.now().toString(36)}-${Math.random()
     .toString(36)
@@ -201,10 +192,7 @@ function normalizeArgs(args) {
   return normalized;
 }
 
-// ============================================================
 // TOOL IMPLEMENTATIONS
-// ============================================================
-
 const toolHandlers = {
   verify_customer: (args = {}) => {
     args = normalizeArgs(args);
@@ -805,28 +793,10 @@ app.use((req, res) => {
   });
 });
 
-// ============================================================
 // START SERVER
-// ============================================================
-
 app.listen(PORT, () => {
   console.clear();
-  console.log(`
-Status:    Running
-Port:      ${PORT}
-Environment: ${process.env.NODE_ENV || "development"}
-
-Endpoints:
-  POST /webhook
-  GET  /health
-  GET  /metrics
-  GET  /customers
-  GET  /calls
-  GET  /ptps
-  GET  /payments
-  GET  /escalations
-  POST /reset
-  POST /test/:tool
+  console.log(` Status: Running Port: ${PORT} Environment: ${process.env.NODE_ENV || "development"}
 `);
 });
 
