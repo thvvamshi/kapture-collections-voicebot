@@ -1,5 +1,4 @@
-# Kapture Finance Voice AI Collections Agent --- Maya {#kapture-finance-voice-ai-collections-agent--maya}
-
+# Kapture Finance Voice AI Collections Agent --- Maya
 > An automated Voice AI collections agent built with Vapi, Deepgram,
 > OpenAI, ElevenLabs, and a Node.js/Express mock backend.
 
